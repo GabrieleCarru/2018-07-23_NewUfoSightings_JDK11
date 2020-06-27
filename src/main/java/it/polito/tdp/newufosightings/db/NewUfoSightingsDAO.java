@@ -14,21 +14,26 @@ import it.polito.tdp.newufosightings.model.State;
 
 public class NewUfoSightingsDAO {
 
-	public List<Sighting> loadAllSightings() {
-		String sql = "SELECT * FROM sighting";
+	public List<Sighting> loadAllSightings(int anno, String shape) {
+		String sql = "select * " + 
+				"from sighting " + 
+				"where year(`datetime`) = ? " + 
+				"and `shape` = ? ";
 		List<Sighting> list = new ArrayList<>();
 		
 		try {
 			Connection conn = DBConnect.getConnection();
-			PreparedStatement st = conn.prepareStatement(sql);	
-			ResultSet res = st.executeQuery();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, anno);
+			st.setString(2, shape);
+			ResultSet rs = st.executeQuery();
 
-			while (res.next()) {
-				list.add(new Sighting(res.getInt("id"), res.getTimestamp("datetime").toLocalDateTime(),
-						res.getString("city"), res.getString("state"), res.getString("country"), res.getString("shape"),
-						res.getInt("duration"), res.getString("duration_hm"), res.getString("comments"),
-						res.getDate("date_posted").toLocalDate(), res.getDouble("latitude"),
-						res.getDouble("longitude")));
+			while (rs.next()) {
+				list.add(new Sighting(rs.getInt("id"), rs.getTimestamp("datetime").toLocalDateTime(),
+						rs.getString("city"), rs.getString("state"), rs.getString("country"), rs.getString("shape"),
+						rs.getInt("duration"), rs.getString("duration_hm"), rs.getString("comments"),
+						rs.getDate("date_posted").toLocalDate(), rs.getDouble("latitude"),
+						rs.getDouble("longitude")));
 			}
 
 			conn.close();

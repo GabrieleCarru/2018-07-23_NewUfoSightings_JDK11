@@ -19,6 +19,8 @@ public class Model {
 	private Graph<State, DefaultWeightedEdge> graph;
 	private Map<String, State> idMap;
 	private Simulator sim;
+	private int anno;
+	private String shape;
 	
 	public Model() {
 		dao = new NewUfoSightingsDAO();
@@ -40,6 +42,9 @@ public class Model {
 				Graphs.addEdge(this.graph, a.getS1(), a.getS2(), a.getPeso());
 			}
 		}
+		
+		this.anno = anno;
+		this.shape = shape;
 	}
 	
 	public List<AvvistamentiStato> avvistamentiPerStato() {
@@ -59,10 +64,14 @@ public class Model {
 		return result;
 	}
 	
-	public void Simula() {
-		sim = new Simulator();
+	public void Simula(int t1, int alpha) {
+		sim = new Simulator(t1, alpha, anno, shape, this, graph, idMap);
 		sim.init();
 		sim.run();
+	}
+	
+	public Map<State, Double> getDefconByStates() {
+		return this.sim.getDefconByStates();
 	}
 	
 	public int getNumberVertex() {
@@ -75,6 +84,10 @@ public class Model {
 	
 	public List<String> getAllShapeByAnno(int anno) {
 		return dao.getAllShapeByAnno(anno);
+	}
+
+	public List<Sighting> getAvvistamenti(int anno, String shape) {
+		return dao.loadAllSightings(anno, shape);
 	}
 	
 }

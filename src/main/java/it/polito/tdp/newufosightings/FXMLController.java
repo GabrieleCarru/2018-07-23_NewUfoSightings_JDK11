@@ -1,11 +1,14 @@
 package it.polito.tdp.newufosightings;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.newufosightings.model.AvvistamentiStato;
 import it.polito.tdp.newufosightings.model.Model;
+import it.polito.tdp.newufosightings.model.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -96,6 +99,38 @@ public class FXMLController {
     @FXML
     void doSimula(ActionEvent event) {
 
+    	txtResult.appendText("\n");
+    	
+    	Integer t1;
+    	Integer alpha;
+    	
+    	try {
+    		t1 = Integer.parseInt(txtT1.getText());
+    		alpha = Integer.parseInt(txtAlfa.getText());
+    	} catch (NumberFormatException e) {
+    		e.printStackTrace();
+    		txtResult.appendText("Errore: inserire dei valori interi positivi per t1 e alpha. \n");
+    		return;
+    	}
+    	
+    	if(t1 < 0) {
+    		txtResult.appendText("Errore: inserire un valore per t1 maggiore di 0. \n");
+    	}
+    	
+    	if(alpha < 0 || alpha > 100) {
+    		txtResult.appendText("Errore: inserire un valore per alpha compreso tra 0 e 100. \n");
+    		return;
+    	}
+    	
+    	this.model.Simula(t1, alpha);
+    	
+    	Map<State, Double> defcon = this.model.getDefconByStates();
+    	List<State> stati = new ArrayList<>(defcon.keySet());
+    	
+    	for(State s : stati) {
+    		txtResult.appendText(String.format(" %s - %s   |  %f \n", s.getId(), s.getName(), defcon.get(s)));
+    	}
+    	
     }
 
     @FXML
