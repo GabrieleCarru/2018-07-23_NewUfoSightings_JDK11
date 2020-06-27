@@ -1,8 +1,10 @@
 package it.polito.tdp.newufosightings;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.newufosightings.model.AvvistamentiStato;
 import it.polito.tdp.newufosightings.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +18,7 @@ import javafx.scene.control.TextField;
 public class FXMLController {
 	
 	private Model model;
+	private Integer anno;
 
     @FXML
     private ResourceBundle resources;
@@ -33,7 +36,7 @@ public class FXMLController {
     private Button btnSelezionaAnno;
 
     @FXML
-    private ComboBox<?> cmbBoxForma;
+    private ComboBox<String> cmbBoxForma;
 
     @FXML
     private Button btnCreaGrafo;
@@ -50,11 +53,44 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
 
+    	String shape = cmbBoxForma.getValue();
+    	
+    	if(shape == null) {
+    		txtResult.appendText("Errore: selezionare una forma dal menù a tendina per proseguire. \n");
+    		return;
+    	}
+    	
+    	this.model.creaGrafo(anno, shape);
+    	
+    	txtResult.appendText(String.format("Grafo creato! [#Vertici %d, #Archi %d] \n", 
+    										this.model.getNumberVertex(), this.model.getNumberEdge()));
+    	
+    	List<AvvistamentiStato> avvistamentiStato = this.model.avvistamentiPerStato();
+    	
+    	for(AvvistamentiStato as : avvistamentiStato) {
+    		txtResult.appendText(as.toString());
+    	}
+    	
     }
 
     @FXML
     void doSelezionaAnno(ActionEvent event) {
 
+    	txtResult.clear();
+    	
+    	try {
+    		anno = Integer.parseInt(txtAnno.getText());
+    	} catch (NumberFormatException e) {
+    		txtResult.appendText("Errore: inserire un valore intero positivo per l'anno. \n");
+    	}
+    	
+    	if(anno < 1910 || anno > 2014) {
+    		txtResult.appendText("Errore: inserire un anno compreso tra il 1910 e il 2014. \n");
+    		return;
+    	}
+    	
+    	cmbBoxForma.getItems().addAll(this.model.getAllShapeByAnno(anno));
+    	
     }
 
     @FXML

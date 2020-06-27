@@ -15,9 +15,9 @@ public class TestDAO {
 			System.err.println("Test FAILED");
 		}
 
-		NewUfoSightingsDAO dao = new NewUfoSightingsDAO();
+		//NewUfoSightingsDAO dao = new NewUfoSightingsDAO();
 
-		System.out.println(dao.loadAllStates());
+		//System.out.println(dao.loadAllStates());
 	}
 
 }
